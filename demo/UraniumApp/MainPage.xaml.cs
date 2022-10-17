@@ -9,15 +9,41 @@ public partial class MainPage : UraniumContentPage
         InitializeComponent();
     }
 
-    //private async void OnCounterClicked(object sender, EventArgs e)
-    //{
-    //    count++;
+    private async void OnCorrectDrop(object sender, DropEventArgs e)
+    {
+        if (sender is DropGestureRecognizer recognizer  && recognizer.Parent is BoxView box)
+        {
+            box.Color = Colors.Green;
+            
+            await Task.Delay(1000);
+            box.Color = Colors.Silver;
+        }
+    }
 
-    //    if (count == 1)
-    //        CounterBtn.Text = $"Clicked {count} time";
-    //    else
-    //        CounterBtn.Text = $"Clicked {count} times";
+    private async void OnIncorrectDragOver(object sender, DragEventArgs e)
+    {
+        if (sender is DropGestureRecognizer recognizer && recognizer.Parent is BoxView box)
+        {
+            box.Color = Colors.Red;
 
-    //    SemanticScreenReader.Announce(CounterBtn.Text);
-    //}
+            await Task.Delay(1000);
+            box.Color = Colors.Silver;
+        }
+    }
+
+    private void DragGestureRecognizer_DragStarting(object sender, DragStartingEventArgs e)
+    {
+        if (sender is DragGestureRecognizer recognizer && recognizer.Parent is BoxView box)
+        {
+            box.Opacity = 0.5;
+        }
+    }
+
+    private void DragGestureRecognizer_DropCompleted(object sender, DropCompletedEventArgs e)
+    {
+        if (sender is DragGestureRecognizer recognizer && recognizer.Parent is BoxView box)
+        {
+            box.Opacity = 1;
+        }
+    }
 }

@@ -13,56 +13,32 @@
              x:Class="UraniumApp.MainPage">
 
     <ScrollView>
-        <VerticalStackLayout
-            Spacing="25"
-            Padding="30"
-            VerticalOptions="Center">
+        <VerticalStackLayout Margin="20">
 
-            <input:FormView Spacing="20">
-                
-                <controls:PickerField Title="Pick an option" Icon="{FontImageSource FontFamily=MaterialRegular, Glyph={x:Static m:MaterialRegular.Expand_circle_down}}">
-                    <controls:PickerField.Items>
-                        <x:String>Option 1</x:String>
-                        <x:String>Option 2</x:String>
-                        <x:String>Option 3</x:String>
-                        <x:String>Option 4</x:String>
-                    </controls:PickerField.Items>
-
-                    <validation:RequiredValidation />
-                </controls:PickerField>
-            </input:FormView>
-
-            <!--<Image
-
-                Source="dotnet_bot.png"
-                SemanticProperties.Description="Cute dot net bot waving hi to you!"
-                HeightRequest="200"
-                HorizontalOptions="Center" />
-
-            <Label
-                Text="Hello, World!"
-                SemanticProperties.HeadingLevel="Level1"
-                FontSize="32"
-                HorizontalOptions="Center" />
-
-            <Label
-                Text="Welcome to .NET Multi-platform App UI"
-                SemanticProperties.HeadingLevel="Level2"
-                SemanticProperties.Description="Welcome to dot net Multi platform App U I"
-                FontSize="18"
-                HorizontalOptions="Center" />-->
+            <BoxView HeightRequest="100" WidthRequest="100" Color="LightBlue" HorizontalOptions="Center">
+                <BoxView.GestureRecognizers>
+                    <DragGestureRecognizer DragStarting="DragGestureRecognizer_DragStarting" DropCompleted="DragGestureRecognizer_DropCompleted" />
+                </BoxView.GestureRecognizers>
+            </BoxView>
 
 
-            <!--<Button
-                x:Name="CounterBtn" StyleClass="ElevatedButton"
-                Text="Click me"
-                Margin="50"
-                TextColor="{DynamicResource Error}"
-                SemanticProperties.Hint="Counts the number of times you click"
-                Clicked="OnCounterClicked"
-                HorizontalOptions="Center">
-            </Button>-->
-
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="20">
+                <BoxView Color="Silver"
+                   HeightRequest="100"
+                   WidthRequest="100">
+                    <BoxView.GestureRecognizers>
+                        <DropGestureRecognizer Drop="OnCorrectDrop" />
+                    </BoxView.GestureRecognizers>
+                </BoxView>
+                <BoxView Grid.Column="1"
+                   Color="Silver"
+                   HeightRequest="100"
+                   WidthRequest="100">
+                    <BoxView.GestureRecognizers>
+                        <DropGestureRecognizer DragOver="OnIncorrectDragOver" />
+                    </BoxView.GestureRecognizers>
+                </BoxView>
+            </HorizontalStackLayout>
         </VerticalStackLayout>
     </ScrollView>
 </uranium:UraniumContentPage>
