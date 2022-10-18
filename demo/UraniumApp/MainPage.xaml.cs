@@ -20,13 +20,18 @@ public partial class MainPage : UraniumContentPage
         }
     }
 
-    private async void OnIncorrectDragOver(object sender, DragEventArgs e)
+    private void OnIncorrectDragOver(object sender, DragEventArgs e)
     {
         if (sender is DropGestureRecognizer recognizer && recognizer.Parent is BoxView box)
         {
             box.Color = Colors.Red;
+        }
+    }
 
-            await Task.Delay(1000);
+    private void OnIncorrectDragLeave(object sender, DragEventArgs e)
+    {
+        if (sender is DropGestureRecognizer recognizer && recognizer.Parent is BoxView box)
+        {
             box.Color = Colors.Silver;
         }
     }

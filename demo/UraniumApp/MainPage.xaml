@@ -17,7 +17,7 @@
 
             <BoxView HeightRequest="100" WidthRequest="100" Color="LightBlue" HorizontalOptions="Center">
                 <BoxView.GestureRecognizers>
-                    <DragGestureRecognizer DragStarting="DragGestureRecognizer_DragStarting" DropCompleted="DragGestureRecognizer_DropCompleted" />
+                    <DragGestureRecognizer  DragStarting="DragGestureRecognizer_DragStarting" DropCompleted="DragGestureRecognizer_DropCompleted" />
                 </BoxView.GestureRecognizers>
             </BoxView>
 
@@ -35,7 +35,7 @@
                    HeightRequest="100"
                    WidthRequest="100">
                     <BoxView.GestureRecognizers>
-                        <DropGestureRecognizer DragOver="OnIncorrectDragOver" />
+                        <DropGestureRecognizer DragOver="OnIncorrectDragOver" DragLeave="OnIncorrectDragLeave" />
                     </BoxView.GestureRecognizers>
                 </BoxView>
             </HorizontalStackLayout>

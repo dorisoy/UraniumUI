@@ -1,5 +1,8 @@
-﻿using System.Collections;
+﻿using InputKit.Shared.Controls;
+using Microsoft.Maui.Controls;
+using System.Collections;
 using System.Windows.Input;
+using UraniumUI.Extensions;
 using UraniumUI.Resources;
 
 namespace UraniumUI.Material.Controls;
@@ -20,7 +23,65 @@ public partial class TreeView : VerticalStackLayout
             holder.TreeView = this;
             return holder;
         }));
+
+        DragGestureRecognizer.DragStarting += DragGestureRecognizer_DragStarting;
+        DragGestureRecognizer.DropCompleted += DragGestureRecognizer_DropCompleted;
+        DropGestureRecognizer.Drop += DropGestureRecognizer_Drop;
     }
+
+    private void DragGestureRecognizer_DragStarting(object sender, DragStartingEventArgs e)
+    {
+        if (sender is DragGestureRecognizer recognizer && recognizer.Parent is TreeViewNodeHolderView holderView)
+        {
+            holderView.Opacity = 0.5;
+            CurrentDraggingView = holderView;
+        }
+    }
+
+    private void DragGestureRecognizer_DropCompleted(object sender, DropCompletedEventArgs e)
+    {
+        if (sender is DragGestureRecognizer recognizer && recognizer.Parent is TreeViewNodeHolderView holderView)
+        {
+            holderView.Opacity = 1;
+            CurrentDraggingView = null;
+        }
+    }
+
+    private void DropGestureRecognizer_Drop(object sender, DropEventArgs e)
+    {
+        if (CurrentDraggingView == null)
+        {
+            return;
+        }
+
+        if (sender is DropGestureRecognizer recognizer && recognizer.Parent is TreeViewNodeHolderView targetHolder)
+        {
+            var targetParentHolder = targetHolder.FindInParents<TreeViewNodeHolderView>();
+
+            var targetItemsSource = targetParentHolder != null ? targetParentHolder.FindChildrenItemsSource() : ItemsSource;
+
+            var index = targetItemsSource.IndexOf(targetHolder.BindingContext);
+
+            var sourceParentHolder = CurrentDraggingView.FindInParents<TreeViewNodeHolderView>();
+            var sourceItemsSource = sourceParentHolder != null ? sourceParentHolder.FindChildrenItemsSource() : ItemsSource;
+
+            if (sourceItemsSource == targetItemsSource)
+            {
+                sourceItemsSource.Remove(CurrentDraggingView.BindingContext);
+                targetItemsSource.Insert(index, CurrentDraggingView.BindingContext);
+            }
+            else
+            {
+                targetItemsSource.Insert(index, CurrentDraggingView.BindingContext);
+                sourceItemsSource.Remove(CurrentDraggingView);
+            }
+        }
+    }
+
+    public TreeViewNodeHolderView CurrentDraggingView { get; internal protected set; }
+
+    public DragGestureRecognizer DragGestureRecognizer { get; } = new();
+    public DropGestureRecognizer DropGestureRecognizer { get; } = new();
 
     private BindingBase childrenBinding = new Binding("Children");
     public BindingBase ChildrenBinding
@@ -115,7 +176,7 @@ public partial class TreeView : VerticalStackLayout
 
     public static readonly BindableProperty ArrowColorProperty = BindableProperty.Create(
         nameof(ArrowColor), typeof(Color), typeof(TreeView), ColorResource.GetColor("OnBackground", "OnBackgroundDark", Colors.DarkGray),
-            propertyChanged: (bindable, oldValue, newValue)=> (bindable as TreeView).OnArrowColorChanged());
+            propertyChanged: (bindable, oldValue, newValue) => (bindable as TreeView).OnArrowColorChanged());
 
     public static readonly BindableProperty IsExpandedProperty =
         BindableProperty.CreateAttached("IsExpanded", typeof(bool), typeof(TreeViewNodeHolderView), false,

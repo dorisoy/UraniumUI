@@ -1,4 +1,6 @@
 ﻿using InputKit.Shared.Controls;
+using System.Collections;
+using System.Reflection;
 using System.Windows.Input;
 using UraniumUI.Pages;
 using UraniumUI.Resources;
@@ -49,6 +51,23 @@ public class TreeViewNodeHolderView : VerticalStackLayout
         }
     }
 
+    private PropertyInfo childrenPropertyInfo;
+    protected internal PropertyInfo ChildrenPropertyInfo
+    {
+        get
+        {
+            if (childrenPropertyInfo is null)
+            {
+                if (ChildrenBinding is not Binding childrenBinding)
+                {
+                    return null;
+                }
+                childrenPropertyInfo = this.BindingContext.GetType().GetProperty(childrenBinding.Path);
+            }
+            return childrenPropertyInfo;
+        }
+    }
+    
     public TreeViewNodeHolderView(DataTemplate dataTemplate, TreeView treeView, BindingBase childrenBinding)
     {
         if (treeView is null)
@@ -92,6 +111,8 @@ public class TreeViewNodeHolderView : VerticalStackLayout
         nodeChildren.ChildAdded += (s, e) => OnPropertyChanged(nameof(IsLeaf));
         nodeChildren.ChildRemoved += (s, e) => OnPropertyChanged(nameof(IsLeaf));
 
+        this.GestureRecognizers.Add(TreeView.DragGestureRecognizer);
+        this.GestureRecognizers.Add(TreeView.DropGestureRecognizer);
         InitializeArrowButton();
     }
 
@@ -205,6 +226,16 @@ public class TreeViewNodeHolderView : VerticalStackLayout
         }
 
         LoadChildrenIfNecessary();
+    }
+
+    public IList FindChildrenItemsSource()
+    {
+        if (ChildrenBinding is not Binding childrenBinding)
+        {
+            return null;
+        }
+
+        return ChildrenPropertyInfo.GetValue(this.BindingContext) as IList;
     }
 
     protected virtual void LoadChildrenIfNecessary()
